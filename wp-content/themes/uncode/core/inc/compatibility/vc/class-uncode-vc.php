@@ -20,9 +20,6 @@ class Uncode_VC_Functions {
 	public function __construct() {
 		// Disable Gutenberg when VC is active
 		add_action( 'uncode_upgraded', array( $this, 'disable_gutenberg' ) );
-
-		// Don't load Gutenberg CSS if disabled
-		add_filter( 'uncode_load_gutenberg_css', array( $this, 'disable_gutenberg_css' ) );
 	}
 
 	/**
@@ -37,17 +34,6 @@ class Uncode_VC_Functions {
 		}
 
 		update_option( 'uncode_check_for_vc_gutenberg_disable_option', true );
-	}
-
-	/**
-	 * Don't load Gutenberg CSS when disabled
-	 */
-	public function disable_gutenberg_css() {
-		if ( get_option( 'wpb_js_gutenberg_disable' ) && class_exists( 'Vc_Manager' ) ) {
-			return false;
-		}
-
-		return true;
 	}
 }
 

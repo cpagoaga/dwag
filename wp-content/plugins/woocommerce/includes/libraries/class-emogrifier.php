@@ -86,15 +86,6 @@ class Emogrifier
     const DEFAULT_DOCUMENT_TYPE = '<!DOCTYPE html>';
 
     /**
-     * @var string Regular expression part to match tag names that PHP's DOMDocument implementation is not aware are
-     *      self-closing. These are mostly HTML5 elements, but for completeness <command> (obsolete) and <keygen>
-     *      (deprecated) are also included.
-     *
-     * @see https://bugs.php.net/bug.php?id=73175
-     */
-    const PHP_UNRECOGNIZED_VOID_TAGNAME_MATCHER = '(?:command|embed|keygen|source|track|wbr)';
-
-    /**
      * @var \DOMDocument
      */
     protected $domDocument = null;
@@ -330,9 +321,7 @@ class Emogrifier
      */
     protected function render()
     {
-        $htmlWithPossibleErroneousClosingTags = $this->domDocument->saveHTML();
-
-        return $this->removeSelfClosingTagsClosingTags($htmlWithPossibleErroneousClosingTags);
+        return $this->domDocument->saveHTML();
     }
 
     /**
@@ -342,22 +331,9 @@ class Emogrifier
      */
     protected function renderBodyContent()
     {
-        $htmlWithPossibleErroneousClosingTags = $this->domDocument->saveHTML($this->getBodyElement());
-        $bodyNodeHtml = $this->removeSelfClosingTagsClosingTags($htmlWithPossibleErroneousClosingTags);
+        $bodyNodeHtml = $this->domDocument->saveHTML($this->getBodyElement());
 
         return \str_replace(['<body>', '</body>'], '', $bodyNodeHtml);
-    }
-
-    /**
-     * Eliminates any invalid closing tags for void elements from the given HTML.
-     *
-     * @param string $html
-     *
-     * @return string
-     */
-    private function removeSelfClosingTagsClosingTags($html)
-    {
-        return \preg_replace('%</' . static::PHP_UNRECOGNIZED_VOID_TAGNAME_MATCHER . '>%', '', $html);
     }
 
     /**
@@ -461,18 +437,20 @@ class Emogrifier
     private function createRawDomDocument($html)
     {
         $domDocument = new \DOMDocument();
+        $domDocument->encoding = 'UTF-8';
         $domDocument->strictErrorChecking = false;
         $domDocument->formatOutput = true;
         $libXmlState = \libxml_use_internal_errors(true);
         $domDocument->loadHTML($this->prepareHtmlForDomConversion($html));
         \libxml_clear_errors();
         \libxml_use_internal_errors($libXmlState);
+        $domDocument->normalizeDocument();
 
         $this->domDocument = $domDocument;
     }
 
     /**
-     * Returns the HTML with added document type, Content-Type meta tag, and self-closing slashes, if needed,
+     * Returns the HTML with added document type and Content-Type meta tag if needed,
      * ensuring that the HTML will be good for creating a DOM document from it.
      *
      * @param string $html
@@ -481,8 +459,7 @@ class Emogrifier
      */
     private function prepareHtmlForDomConversion($html)
     {
-        $htmlWithSelfClosingSlashes = $this->ensurePhpUnrecognizedSelfClosingTagsAreXml($html);
-        $htmlWithDocumentType = $this->ensureDocumentType($htmlWithSelfClosingSlashes);
+        $htmlWithDocumentType = $this->ensureDocumentType($html);
 
         return $this->addContentTypeMetaTag($htmlWithDocumentType);
     }
@@ -1425,7 +1402,7 @@ class Emogrifier
      *
      * This method is protected to allow overriding.
      *
-     * @see https://github.com/MyIntervals/emogrifier/issues/103
+     * @see https://github.com/jjriv/emogrifier/issues/103
      *
      * @param string $css
      *
@@ -1541,11 +1518,7 @@ class Emogrifier
     private function removeUnprocessableTags()
     {
         foreach ($this->unprocessableHtmlTags as $tagName) {
-            // Deleting nodes from a 'live' NodeList invalidates iteration on it, so a copy must be made to iterate.
-            $nodes = [];
-            foreach ($this->domDocument->getElementsByTagName($tagName) as $node) {
-                $nodes[] = $node;
-            }
+            $nodes = $this->domDocument->getElementsByTagName($tagName);
             /** @var \DOMNode $node */
             foreach ($nodes as $node) {
                 $hasContent = $node->hasChildNodes() || $node->hasChildNodes();
@@ -1607,23 +1580,6 @@ class Emogrifier
         }
 
         return $reworkedHtml;
-    }
-
-    /**
-     * Makes sure that any self-closing tags not recognized as such by PHP's DOMDocument implementation have a
-     * self-closing slash.
-     *
-     * @param string $html
-     *
-     * @return string HTML with problematic tags converted.
-     */
-    private function ensurePhpUnrecognizedSelfClosingTagsAreXml($html)
-    {
-        return \preg_replace(
-            '%<' . static::PHP_UNRECOGNIZED_VOID_TAGNAME_MATCHER . '\\b[^>]*+(?<!/)(?=>)%',
-            '$0/',
-            $html
-        );
     }
 
     /**
@@ -1828,21 +1784,21 @@ class Emogrifier
             if ($parseResult[static::MULTIPLIER] < 0) {
                 $parseResult[static::MULTIPLIER] = \abs($parseResult[static::MULTIPLIER]);
                 $xPathExpression = \sprintf(
-                    '*[(last() - position()) mod %1%u = %2$u]/self::%3$s',
+                    '*[(last() - position()) mod %1%u = %2$u]/static::%3$s',
                     $parseResult[static::MULTIPLIER],
                     $parseResult[static::INDEX],
                     $match[1]
                 );
             } else {
                 $xPathExpression = \sprintf(
-                    '*[position() mod %1$u = %2$u]/self::%3$s',
+                    '*[position() mod %1$u = %2$u]/static::%3$s',
                     $parseResult[static::MULTIPLIER],
                     $parseResult[static::INDEX],
                     $match[1]
                 );
             }
         } else {
-            $xPathExpression = \sprintf('*[%1$u]/self::%2$s', $parseResult[static::INDEX], $match[1]);
+            $xPathExpression = \sprintf('*[%1$u]/static::%2$s', $parseResult[static::INDEX], $match[1]);
         }
 
         return $xPathExpression;

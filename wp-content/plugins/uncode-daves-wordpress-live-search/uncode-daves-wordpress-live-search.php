@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Uncode Dave's WordPress Live Search (4.4.1)
-Description: Tailored version of Dave's WordPress Live Search - Adds "live search" functionality to your WordPress site. Uses the built-in search and jQuery.
+Description: Extended version of Dave's WordPress Live Search - Adds "live search" functionality to your WordPress site. Uses the built-in search and jQuery.
 Version: 1.0.3
 Author: Dave Ross
 Author URI: http://davidmichaelross.com/
@@ -81,11 +81,6 @@ add_action( 'init', array( 'DWLS_Relevanssi_Bridge', 'init' ) );
 class DWLS_Util {
 
 	public static function updateFirstImagePostmeta( $post_id, $post ) {
-		// EDITED BY UNCODE
-		// Skip feeds
-		if ( isset( $post->post_type ) && 'uncode_feed' == $post->post_type ) {
-			return;
-		}
 
 		$parent_post = wp_is_post_revision( $post_id );
 		if ( false !== $parent_post ) {

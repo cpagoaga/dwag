@@ -157,3 +157,10 @@ add_filter( 'auto_update_core', '__return_false', 9999 );
 add_filter( 'auto_update_translation', '__return_false', 9999 );
 add_filter( 'auto_core_update_send_email', '__return_false', 9999 );
 add_filter( 'send_core_update_notification_email', '__return_false', 9999 );
+
+// Filter critical error from WordPress Site Health Check about background/automatic updates.
+function wpe_remove_update_check( $tests ) {
+	unset( $tests['async']['background_updates'] );
+	return $tests;
+}
+add_filter( 'site_status_tests', 'wpe_remove_update_check' );

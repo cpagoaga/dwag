@@ -22,9 +22,8 @@ get_header();
 $limit_width = $limit_content_width = $the_content = $main_content = $layout = $sidebar_style = $sidebar_bg_color = $sidebar = $sidebar_size = $sidebar_sticky = $sidebar_padding = $sidebar_inner_padding = $sidebar_content = $title_content = $navigation_content = $page_custom_width = $row_classes = $main_classes = $footer_classes = $generic_body_content_block = '';
 $index_has_navigation = false;
 
-if (isset($post->post_type)) {
-	$post_type = $post->post_type . '_index';
-} else {
+if (isset($post->post_type)) $post_type = $post->post_type . '_index';
+else {
 	global $wp_taxonomies;
 	if ( isset($wp_taxonomies[$wp_query->get_queried_object()->taxonomy]) ) {
 		$get_object = $wp_taxonomies[$wp_query->get_queried_object()->taxonomy];
@@ -32,17 +31,13 @@ if (isset($post->post_type)) {
 	}
 }
 
-if (is_author()) {
-	$post_type = 'author_index';
-}
+if (is_author()) $post_type = 'author_index';
 
 $tax = (isset(get_queried_object()->term_id)) ? get_queried_object()->term_id : '';
 $single_post_width = ot_get_option('_uncode_' . $post_type . '_single_width');
 $single_text_length = ot_get_option('_uncode_' . $post_type . '_single_text_length');
 set_query_var( 'single_post_width', $single_post_width );
-if ($single_text_length !== '') {
-	set_query_var( 'single_text_length', $single_text_length );
-}
+if ($single_text_length !== '') set_query_var( 'single_text_length', $single_text_length );
 
 /** Get general datas **/
 $style = ot_get_option('_uncode_general_style');
@@ -51,12 +46,13 @@ $bg_color = ($bg_color == '') ? ' style-'.$style.'-bg' : ' style-'.$bg_color.'-b
 
 /** Get page width info **/
 $generic_content_full = ot_get_option('_uncode_' . $post_type . '_layout_width');
-if ($generic_content_full === '') {
+if ($generic_content_full === '')
+{
 	$main_content_full = ot_get_option('_uncode_body_full');
-	if ($main_content_full === '' || $main_content_full === 'off') {
-		$limit_content_width = ' limit-width';
-	}
-} else {
+	if ($main_content_full === '' || $main_content_full === 'off') $limit_content_width = ' limit-width';
+}
+else
+{
 	if ($generic_content_full === 'limit') {
 		$generic_custom_width = ot_get_option('_uncode_'.$post_type.'_layout_width_custom');
 		if (isset($generic_custom_width[0]) && isset($generic_custom_width[1])) {
@@ -74,14 +70,14 @@ if ($generic_content_full === '') {
 
 /** Collect header data **/
 $page_header_type = ot_get_option('_uncode_' . $post_type . '_header');
-if ($page_header_type !== '' && $page_header_type !== 'none') {
+if ($page_header_type !== '' && $page_header_type !== 'none')
+{
 	$metabox_data['_uncode_header_type'] = array($page_header_type);
 	$term_back = get_option( '_uncode_taxonomy_' . $tax );
 
 	$author = get_user_by( 'slug', get_query_var( 'author_name' ) );
-	if ( is_author() ) {
+	if ( is_author() )
 		$user_uncode_meta = get_the_author_meta( 'user_uncode_meta', $author->ID );
-	}
 
 	if (isset($term_back['term_media']) && $term_back['term_media'] !== '') {
 		$featured_image = $term_back['term_media'];
@@ -97,13 +93,10 @@ if ($page_header_type !== '' && $page_header_type !== 'none') {
 
 /** Get layout info **/
 $activate_sidebar = ot_get_option('_uncode_' . $post_type . '_activate_sidebar');
-$sidebar_name     = ot_get_option('_uncode_' . $post_type . '_sidebar');
-
-if ($activate_sidebar !== 'off' && is_active_sidebar( $sidebar_name )) {
+if ($activate_sidebar !== 'off')
+{
 	$layout = ot_get_option('_uncode_' . $post_type . '_sidebar_position');
-	if ($layout === '') {
-		$layout = 'sidebar_right';
-	}
+	if ($layout === '') $layout = 'sidebar_right';
 	$sidebar = ot_get_option('_uncode_' . $post_type . '_sidebar');
 	$sidebar_style = ot_get_option('_uncode_' . $post_type . '_sidebar_style');
 	$sidebar_size = ot_get_option('_uncode_' . $post_type . '_sidebar_size');
@@ -112,17 +105,13 @@ if ($activate_sidebar !== 'off' && is_active_sidebar( $sidebar_name )) {
 	$sidebar_fill = ot_get_option('_uncode_' . $post_type . '_sidebar_fill');
 	$sidebar_bg_color = ot_get_option('_uncode_' . $post_type . '_sidebar_bgcolor');
 	$sidebar_bg_color = ($sidebar_bg_color !== '') ? ' style-' . $sidebar_bg_color . '-bg' : '';
-	if ($sidebar_style === '') {
-		$sidebar_style = $style;
-	}
+	if ($sidebar_style === '') $sidebar_style = $style;
 }
 
 /** Get breadcrumb info **/
 $generic_breadcrumb = ot_get_option('_uncode_' . $post_type . '_breadcrumb');
 $show_breadcrumb = ($generic_breadcrumb === 'off') ? false : true;
-if ($show_breadcrumb) {
-	$breadcrumb_align = ot_get_option('_uncode_' . $post_type . '_breadcrumb_align');
-}
+if ($show_breadcrumb) $breadcrumb_align = ot_get_option('_uncode_' . $post_type . '_breadcrumb_align');
 
 /** Get title info **/
 $generic_show_title = ot_get_option('_uncode_' . $post_type . '_title');
@@ -136,23 +125,17 @@ $show_title = ($generic_show_title === 'off') ? false : true;
 $posts_counter = $wp_query->post_count;
 
 /** Build header **/
-if ($page_header_type !== '' && $page_header_type !== 'none') {
+if ($page_header_type !== '' && $page_header_type !== 'none')
+{
 	$get_title = uncode_archive_title();
 	$get_subtitle = isset(get_queried_object()->description) ? get_queried_object()->description : '';
-
-	if ( ot_get_option('_uncode_' . $post_type . '_custom_title_activate') === 'on' && !is_category() && !is_tax() ) {
-		$get_title = ot_get_option('_uncode_' . $post_type . '_custom_title_text');
-		$get_subtitle = ot_get_option('_uncode_' . $post_type . '_custom_subtitle_text');
-	}
-
-	$get_title = apply_filters( 'uncode_archive_title', $get_title );
 	$get_subtitle = apply_filters( 'uncode_archive_subtitle', $get_subtitle );
 	$page_header = new unheader($metabox_data, $get_title, $get_subtitle);
 
 	$header_html = $page_header->html;
 	if ($header_html !== '') {
 		echo '<div id="page-header">';
-		echo uncode_remove_p_tag( $page_header->html );
+		echo uncode_remove_wpautop( $page_header->html );
 		echo '</div>';
 	}
 }
@@ -160,10 +143,9 @@ echo '<script type="text/javascript">UNCODE.initHeader();</script>';
 
 /** Build breadcrumb **/
 
-if ($show_breadcrumb) {
-	if ($breadcrumb_align === '') {
-		$breadcrumb_align = 'right';
-	}
+if ($show_breadcrumb)
+{
+	if ($breadcrumb_align === '') $breadcrumb_align = 'right';
 	$breadcrumb_align = ' text-' . $breadcrumb_align;
 
 	$content_breadcrumb = uncode_breadcrumbs();
@@ -173,7 +155,8 @@ if ($show_breadcrumb) {
 
 /** Build title **/
 
-if ($show_title) {
+if ($show_title)
+{
 	$get_title = uncode_archive_title();
 	$title_content = '<div class="post-title-wrapper"><h1 class="post-title">' . $get_title . '</h1></div>';
 }
@@ -199,11 +182,8 @@ if (have_posts()):
 			 * If you want to override this in a child theme, then include a file
 			 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
 			*/
-			if ($post->post_type === 'post') {
-				$template = get_post_format();
-			} else {
-				$template = $post->post_type;
-			}
+			if ($post->post_type === 'post') $template = get_post_format();
+			else $template = $post->post_type;
 			ob_start();
 			get_template_part('content', $template);
 			$the_content .= ob_get_clean();
@@ -217,25 +197,17 @@ if (have_posts()):
 
 		$generic_body_content_block = apply_filters( 'wpml_object_id', $generic_body_content_block, 'post' );
 		$uncode_block = get_post_field('post_content', $generic_body_content_block);
-		$post_types = !is_date() ? $post->post_type : 'post';
-		$post_types = apply_filters( 'uncode_default_post_type_archive', array($post_types) );
-		$archive_query = ' loop="size:'.get_option('posts_per_page').'|order_by:date|post_type:'.implode(",", $post_types);
+		$archive_query = ' loop="size:'.get_option('posts_per_page').'|order_by:date|post_type:'.(!is_date() ? $post->post_type : 'post');
 
 		if (is_author()) {
 			$archive_query .= '|authors:'.get_queried_object()->ID.'"';
-		} elseif (is_date()) {
-			if (isset($wp_query->query_vars['year'])) {
-				$archive_query .= '|year:'.$wp_query->query_vars['year'];
-			}
-			if (isset($wp_query->query_vars['monthnum'])) {
-				$archive_query .= '|month:'.$wp_query->query_vars['monthnum'];
-			}
-			if (isset($wp_query->query_vars['day'])) {
-				$archive_query .= '|day:'.$wp_query->query_vars['day'];
-			}
+		} else if (is_date()) {
+			if (isset($wp_query->query_vars['year'])) $archive_query .= '|year:'.$wp_query->query_vars['year'];
+			if (isset($wp_query->query_vars['monthnum'])) $archive_query .= '|month:'.$wp_query->query_vars['monthnum'];
+			if (isset($wp_query->query_vars['day'])) $archive_query .= '|day:'.$wp_query->query_vars['day'];
 			$archive_query .= '"';
 		} else {
-			if ( property_exists( get_queried_object(), 'taxonomy' ) && in_array( $post->post_type, $post_types ) ) {
+			if ($post->post_type === 'post') {
 				switch (get_queried_object()->taxonomy) {
 					case 'category':
 						$tax_query = 'categories';
@@ -247,14 +219,9 @@ if (have_posts()):
 						$tax_query = 'tax_query';
 						break;
 				}
-			} else {
-				$tax_query = 'tax_query';
-			}
-			if ($tax !== '') {
-				$archive_query .= '|'.$tax_query.':'.$tax.'"';
-			} else {
-				$archive_query .= '"';
-			}
+			} else $tax_query = 'tax_query';
+			if ($tax !== '') $archive_query .= '|'.$tax_query.':'.$tax.'"';
+			else $archive_query .= '"';
 		}
 
 		$regex = '/\[uncode_index(.*?)\]/';
@@ -269,19 +236,13 @@ if (have_posts()):
 				foreach ($matches_attr as $key_attr => $value_attr) {
 					switch (trim($value_attr[1])) {
 						case 'auto_query':
-							if ($value_attr[2] === 'yes') {
-								$index_found = true;
-							}
+							if ($value_attr[2] === 'yes') $index_found = true;
 							break;
 						case 'pagination':
-							if ($value_attr[2] === 'yes') {
-								$index_pagination = true;
-							}
+							if ($value_attr[2] === 'yes') $index_pagination = true;
 							break;
 						case 'infinite':
-							if ($value_attr[2] === 'yes') {
-								$index_infinite = true;
-							}
+							if ($value_attr[2] === 'yes') $index_infinite = true;
 							break;
 					}
 				}
@@ -293,9 +254,7 @@ if (have_posts()):
 				}
 				$replacement = '[uncode_index' . $value[1] . ']';
 				$uncode_block = str_replace($value[0], $replacement, $uncode_block);
-				if ($index_pagination || $index_infinite) {
-					$index_has_navigation = true;
-				}
+				if ($index_pagination || $index_infinite) $index_has_navigation = true;
 			}
 		}
 		$the_content .= $uncode_block;
@@ -310,13 +269,12 @@ if (have_posts()):
 
 	endif;
 
-	if ($layout === 'sidebar_right' || $layout === 'sidebar_left') {
+	if ($layout === 'sidebar_right' || $layout === 'sidebar_left')
+	{
 
 		/** Build structure with sidebar **/
 
-		if ($sidebar_size === '') {
-			$sidebar_size = 4;
-		}
+		if ($sidebar_size === '') $sidebar_size = 4;
 		$main_size = 12 - $sidebar_size;
 		$expand_col = '';
 
@@ -324,25 +282,34 @@ if (have_posts()):
 
 		$footer_classes = ' no-top-padding double-bottom-padding';
 
-		if ($sidebar_bg_color !== '') {
-			if ($sidebar_fill === 'on') {
+		if ($sidebar_bg_color !== '')
+		{
+			if ($sidebar_fill === 'on')
+			{
 				$sidebar_inner_padding.= ' std-block-padding';
 				$sidebar_padding.= $sidebar_bg_color;
 				$expand_col = ' unexpand';
-				if ($limit_content_width === '') {
+				if ($limit_content_width === '')
+				{
 					$row_classes.= ' no-h-padding col-no-gutter no-top-padding';
 					$footer_classes = ' std-block-padding no-top-padding';
 					$main_classes.= ' std-block-padding';
-				} else {
+				}
+				else
+				{
 					$row_classes.= ' no-top-padding';
 					$main_classes.= ' double-top-padding';
 				}
-			} else {
+			}
+			else
+			{
 				$row_classes .= ' double-top-padding';
   			$row_classes .= ' double-bottom-padding';
 				$sidebar_inner_padding.= $sidebar_bg_color . ' single-block-padding';
 			}
-		} else {
+		}
+		else
+		{
 			$row_classes.= ' col-std-gutter double-top-padding';
 			$main_classes.= ' double-bottom-padding';
 		}
@@ -354,9 +321,12 @@ if (have_posts()):
 
 		$sidebar_content = "";
 		ob_start();
-		if ($sidebar !== '') {
+		if ($sidebar !== '')
+		{
 			dynamic_sidebar($sidebar);
-		} else {
+		}
+		else
+		{
 			dynamic_sidebar(1);
 		}
 		$sidebar_content = ob_get_clean();
@@ -391,23 +361,18 @@ if (have_posts()):
 	} else {
 
 		/** Create html without sidebar **/
-		if ($generic_body_content_block === '') {
-			$the_content = '<div class="post-content un-no-sidebar-layout"' . $page_custom_width . '>' . uncode_get_row_template($the_content, $limit_width, $limit_content_width, $style, '', 'double', true, 'double') . '</div>';
-		} else {
-			$the_content = '<div class="post-content un-no-sidebar-layout"' . $page_custom_width . '>' . $the_content . '</div>';
-		}
+		if ($generic_body_content_block === '') $the_content = '<div class="post-content un-no-sidebar-layout"' . $page_custom_width . '>' . uncode_get_row_template($the_content, $limit_width, $limit_content_width, $style, '', 'double', true, 'double') . '</div>';
+		else $the_content = '<div class="post-content un-no-sidebar-layout"' . $page_custom_width . '>' . $the_content . '</div>';
 
 	}
 
 	/** Build and display navigation html **/
-	$remove_pagination = ot_get_option('_uncode_' . $post_type . '_remove_pagination');
-	if ( !$index_has_navigation && $remove_pagination !== 'on' ) {
+	if (!$index_has_navigation) {
 		$navigation_option = ot_get_option('_uncode_' . $post_type . '_navigation_activate');
-		if ($navigation_option !== 'off') {
+		if ($navigation_option !== 'off')
+		{
 			$navigation = uncode_posts_navigation();
-			if (!empty($navigation) && $navigation !== '') {
-				$navigation_content = uncode_get_row_template($navigation, '', $limit_content_width, $style, ' row-navigation row-navigation-' . $style, true, true, true);
-			}
+			if (!empty($navigation) && $navigation !== '') $navigation_content = uncode_get_row_template($navigation, '', $limit_content_width, $style, ' row-navigation row-navigation-' . $style, true, true, true);
 		}
 	}
 

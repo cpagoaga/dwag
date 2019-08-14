@@ -10,11 +10,10 @@ extract(shortcode_atts(array(
 	'slug' => ''
 ), $atts));
 
-if ( $tab_id === '' ) {
-	$create_id = preg_replace('/[^A-Za-z0-9\-]/', '', sanitize_title($title)) . '-' . uncode_big_rand();
-} else {
+if ( $tab_id === '' )
+	$create_id = preg_replace('/[^A-Za-z0-9\-]/', '', sanitize_title($title)) . '-' . big_rand();
+else
 	$create_id = $tab_id;
-}
 
 $hash = $slug !== '' ? sanitize_title( $slug ) : $create_id;
 
@@ -33,4 +32,4 @@ $output .= '</div>';
 $output .= '</div>';
 $output .= '</div>';
 
-echo uncode_remove_p_tag($output);
+echo uncode_remove_wpautop($output);

@@ -1,23 +1,23 @@
 <?php
 # Database Configuration
-define( 'DB_NAME', 'wp_dawgstar' );
-define( 'DB_USER', 'dawgstar' );
-define( 'DB_PASSWORD', 'u4VjBb9jI1xA16Fxtaft' );
+define( 'DB_NAME', 'wp_waxtronaut' );
+define( 'DB_USER', 'waxtronaut' );
+define( 'DB_PASSWORD', '1cPADtVVVBZJppH2RlhS' );
 define( 'DB_HOST', '127.0.0.1' );
 define( 'DB_HOST_SLAVE', '127.0.0.1' );
 define('DB_CHARSET', 'utf8');
 define('DB_COLLATE', 'utf8_unicode_ci');
-$table_prefix = 'wp_';
+$table_prefix = 'w4x_';
 
 # Security Salts, Keys, Etc
-define('AUTH_KEY',         'de?n;xtXug+w|0L4:5=d:9gV+$-,.9?EwhNr:GvBn>hItSeVkl}Ii)-_R2LuW+K/');
-define('SECURE_AUTH_KEY',  '9A$j3YTr5:_JauN$|4#(|YI^#qFa+a;uU0Ke/8k[hKcgt[84`pC(TSc,W9COu|@O');
-define('LOGGED_IN_KEY',    'nV>~4Ei;?^Z2oCV2L<p_1YCA@6$NBWc9 ~QW1@n^]4WDnEnBdt+==Zt3,Np=Y4J(');
-define('NONCE_KEY',        'eq]U{i{z0!pHg{m&PZc --cefM]?eY6uI`=Vy=-^ouFjX~j>)=VfByC 09R5+`?)');
-define('AUTH_SALT',        'd$(+2KLyyNImgu:2J-##&~[+kZ~.x+Z>BdJUe`bva|2DfS5_v%c>8y!?FICNX97@');
-define('SECURE_AUTH_SALT', '}h!$Oi5Jg?eQ{DQm^|Y|FnHwF|j}+|E{!Atpdfz5#d.;D&,U.7,/D+@Ze|L.-<kW');
-define('LOGGED_IN_SALT',   ',sHIHH}:T6=WFcj!d6$i=6;r/{cL,5E_72md>zZ5U[ n=PxGom]LE.?:4~09}9c;');
-define('NONCE_SALT',       '8-#C|td|fW?2h5}zq},bFhll.gb69kV|^I/T%)Fl|u+d{x(m-66eO;]>&h*r5A|g');
+define('AUTH_KEY',         '>hL2I]^8leHzr](hD=}M< (Lc_$J|l_-Bt,kJ&C9B4>aZ,}yy2f-:ltaxK-y+{8x');
+define('SECURE_AUTH_KEY',  '+3?-@<+$,HU9HPu?D^U%O/~h*]n:elE/r9X0I|2w*r+A9nkJ*{IEFyM6Wvn(SQpI');
+define('LOGGED_IN_KEY',    '|(H% ?M}p0NSsu,wG1|y}%;i2&L,N9-SXdfzi#qA.V+o #56gPwGcS`LS;JWg4xa');
+define('NONCE_KEY',        '9_f.ZlF0|Q9?F=%{{<jZ|{F/_!A=:<@U5NPblD)S<mDsu:K3S@{GuOq,,,*1Qw*V');
+define('AUTH_SALT',        'gzY^65<sJ{Y@Lnk,]9;R`}>%yw3;GzO9wWVy[MG_Y;:QUrKZ%(9fvc(&Al+56u6t');
+define('SECURE_AUTH_SALT', 'K)jo?tC:Tx%|jnR5g0X6;8>A]yhtZBJp0OQ(w{9,<fI=YQuX/R9~pjl:1{=8[TcD');
+define('LOGGED_IN_SALT',   '>!P1.TcTRv9Tqb{jvV-b?1}f{mqYbO(sdHPzf=>sriba+-lP]Tg]q)ZW?;iW|D3C');
+define('NONCE_SALT',       '_wx3j($,(6x_ u.@ffM|%sk8_~^$+`hV+o8{.b<v&h+; yb]OO&lRTR|=J_n%a5T');
 
 
 # Localized Language Stuff
@@ -26,7 +26,7 @@ define( 'WP_CACHE', TRUE );
 
 define( 'WP_AUTO_UPDATE_CORE', false );
 
-define( 'PWP_NAME', 'dawgstar' );
+define( 'PWP_NAME', 'waxtronaut' );
 
 define( 'FS_METHOD', 'direct' );
 
@@ -36,7 +36,7 @@ define( 'FS_CHMOD_FILE', 0664 );
 
 define( 'PWP_ROOT_DIR', '/nas/wp' );
 
-define( 'WPE_APIKEY', 'cf0ded108d5846973251d2710f9807882294044d' );
+define( 'WPE_APIKEY', '3a226bb29d5093a4633971f4ec5966b95cf6cab4' );
 
 define( 'WPE_CLUSTER_ID', '100337' );
 
@@ -86,13 +86,17 @@ $wpe_no_cdn_uris=array ( );
 
 $wpe_content_regexs=array ( );
 
-$wpe_all_domains=array ( 0 => 'dawgstar.wpengine.com', );
+$wpe_all_domains=array ( 0 => 'waxtronaut.com', 1 => 'waxtronaut.wpengine.com', 2 => 'www.waxtronaut.com', );
 
 $wpe_varnish_servers=array ( 0 => 'pod-100337', );
 
 $wpe_special_ips=array ( 0 => '104.196.146.230', );
 
-$wpe_netdna_domains=array ( );
+$wpe_ec_servers=array ( );
+
+$wpe_largefs=array ( );
+
+$wpe_netdna_domains=array ( 0 =>  array ( 'match' => 'www.waxtronaut.com', 'zone' => '1fsy5a30feql22k9673d0yfa', 'enabled' => true, ), 1 =>  array ( 'match' => 'waxtronaut.com', 'zone' => '76lgdu5a9ckzd403q4f24ec7', 'enabled' => true, ), );
 
 $wpe_netdna_domains_secure=array ( );
 
@@ -101,7 +105,7 @@ $wpe_netdna_push_domains=array ( );
 $wpe_domain_mappings=array ( );
 
 $memcached_servers=array ( );
-define('WPLANG','');
+
 
 # WP Engine ID
 
@@ -112,6 +116,8 @@ define('WPLANG','');
 
 
 
+
+define('WP_DEBUG', false);
 
 # That's It. Pencils down
 if ( !defined('ABSPATH') )

@@ -378,7 +378,7 @@ class WC_AJAX {
 			array(
 				'result'    => empty( $messages ) ? 'success' : 'failure',
 				'messages'  => $messages,
-				'reload'    => $reload_checkout,
+				'reload'    => $reload_checkout ? 'true' : 'false',
 				'fragments' => apply_filters(
 					'woocommerce_update_order_review_fragments',
 					array(

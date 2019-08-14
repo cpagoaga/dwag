@@ -200,7 +200,8 @@ class WC_Tax_Rate_Importer extends WP_Importer {
 	 * @return bool False if error uploading or invalid file, true otherwise
 	 */
 	public function handle_upload() {
-		$file_url = isset( $_POST['file_url'] ) ? wc_clean( wp_unslash( $_POST['file_url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification -- Nonce already verified in WC_Tax_Rate_Importer::dispatch()
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification -- Nonce already verified in WC_Tax_Rate_Importer::dispatch()
+		$file_url = isset( $_POST['file_url'] ) ? wc_clean( wp_unslash( $_POST['file_url'] ) ) : '';
 
 		if ( empty( $file_url ) ) {
 			$file = wp_import_handle_upload();
@@ -209,23 +210,13 @@ class WC_Tax_Rate_Importer extends WP_Importer {
 				$this->import_error( $file['error'] );
 			}
 
-			if ( ! wc_is_file_valid_csv( $file['file'], false ) ) {
-				// Remove file if not valid.
-				wp_delete_attachment( $file['id'], true );
-
-				$this->import_error( __( 'Invalid file type. The importer supports CSV and TXT file formats.', 'woocommerce' ) );
-			}
-
 			$this->id = absint( $file['id'] );
 		} elseif ( file_exists( ABSPATH . $file_url ) ) {
-			if ( ! wc_is_file_valid_csv( ABSPATH . $file_url ) ) {
-				$this->import_error( __( 'Invalid file type. The importer supports CSV and TXT file formats.', 'woocommerce' ) );
-			}
-
 			$this->file_url = esc_attr( $file_url );
 		} else {
 			$this->import_error();
 		}
+		// phpcs:enable
 
 		return true;
 	}

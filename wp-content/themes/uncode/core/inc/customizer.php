@@ -55,8 +55,7 @@ add_action('init', 'uncode_oembed_add_provider');
 
 function uncode_oembed_fetch_url($provider, $url, $args) {
 	if (strpos($url, 'facebook') !== false) {
-		$server_headers = uncode_get_server_headers();
-		$locale = (isset($server_headers['HTTP_ACCEPT_LANGUAGE'])) ? substr($server_headers["HTTP_ACCEPT_LANGUAGE"],0,5) : get_locale();
+		$locale = (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) ? substr($_SERVER["HTTP_ACCEPT_LANGUAGE"],0,5) : get_locale();
 		$locale = str_replace('-','_',$locale);
 		$locale = explode('_', $locale);
 		if (isset($locale[0]) && isset($locale[1])) {
@@ -87,7 +86,7 @@ function uncode_the_content($the_content) {
 	return $the_content;
 }
 
-function uncode_remove_p_tag( $content, $autop = false ) {
+function uncode_remove_wpautop( $content, $autop = false ) {
 
 	if ( $autop ) {
 		$content = wpautop( preg_replace( '/<\/?p\>/', "\n", $content ) . "\n" );
@@ -146,9 +145,7 @@ function uncode_add_images_yoast_sitemap($images, $post_id) {
 	}
 
 	$media = get_post_meta($post->ID, '_uncode_featured_media', 1);
-	if ($media !== '') {
-		$image_ids = array_merge($image_ids, explode(',', $media));
-	}
+	if ($media !== '') $image_ids = array_merge($image_ids, explode(',', $media));
 
 
     foreach ( $image_ids as $image_id ) { //Populate an array with URLs taken from featured image IDs

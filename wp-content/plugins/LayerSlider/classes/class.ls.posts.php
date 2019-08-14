@@ -47,28 +47,25 @@ class LS_Posts {
 
 	public function getParsedObject() {
 
-		if( ! $this->posts ) {
+		if(!$this->posts) {
 			return array();
 		}
 
 		foreach($this->posts as $key => $val) {
-			$this->post = $val;
 			$ret[$key]['post-id'] = $val->ID;
 			$ret[$key]['post-slug'] = $val->post_name;
 			$ret[$key]['post-url'] = get_permalink($val->ID);
-			$ret[$key]['date-published'] = date_i18n(get_option('date_format'), strtotime($val->post_date));
-			$ret[$key]['date-modified'] = date_i18n(get_option('date_format'), strtotime($val->post_modified));
+			$ret[$key]['date-published'] = date(get_option('date_format'), strtotime($val->post_date));
+			$ret[$key]['date-modified'] = date(get_option('date_format'), strtotime($val->post_modified));
 			$ret[$key]['thumbnail'] = $this->getPostThumb($val->ID);
-			$ret[$key]['thumbnail'] = !empty($ret[$key]['thumbnail']) ? $ret[$key]['thumbnail'] : LS_ROOT_URL . '/static/admin/img/blank.gif';
+			$ret[$key]['thumbnail'] = !empty($ret[$key]['thumbnail']) ? $ret[$key]['thumbnail'] : LS_ROOT_URL . '/static/img/blank.gif';
 			$ret[$key]['image'] = '<img src="'.$ret[$key]['thumbnail'].'" alt="">';
 			$ret[$key]['image-url'] = $ret[$key]['thumbnail'];
-			$ret[$key]['title'] = htmlspecialchars($this->getTitle());
-			$ret[$key]['content'] = $this->getContent();
-			$ret[$key]['excerpt'] = $this->getExcerpt();
+			$ret[$key]['title'] = htmlentities(__($val->post_title));
+			$ret[$key]['content'] = wp_strip_all_tags(__($val->post_content));
+			$ret[$key]['excerpt'] = !empty($val->post_excerpt) ? $val->post_excerpt : '';
 			$ret[$key]['author'] = get_userdata($val->post_author)->user_nicename;
-			$ret[$key]['author-name'] = get_userdata($val->post_author)->display_name;
 			$ret[$key]['author-id'] = $val->post_author;
-			$ret[$key]['author-avatar'] = $this->getAuthorImage($val);
 			$ret[$key]['categories'] = $this->getCategoryList($val);
 			$ret[$key]['tags'] = $this->getTagList($val);
 			$ret[$key]['comments'] = $val->comment_count;
@@ -99,11 +96,11 @@ class LS_Posts {
 
 		// Date published
 		if(stripos($str, '[date-published]') !== false) {
-			$str = str_replace('[date-published]', date_i18n(get_option('date_format'), strtotime($this->post->post_date)), $str); }
+			$str = str_replace('[date-published]', date(get_option('date_format'), strtotime($this->post->post_date)), $str); }
 
 		// Date modified
 		if(stripos($str, '[date-modified]') !== false) {
-			$str = str_replace('%date-modified]', date_i18n(get_option('date_format'), strtotime($this->post->post_modified)), $str); }
+			$str = str_replace('%date-modified]', date(get_option('date_format'), strtotime($this->post->post_modified)), $str); }
 
 		// Featured image
 		if(stripos($str, '[image]') !== false) {
@@ -127,7 +124,11 @@ class LS_Posts {
 
 		// Title
 		if(stripos($str, '[title]') !== false) {
-			$str = str_replace('[title]', $this->getTitle($textlength), $str);
+			if(!empty($textlength)) {
+				$str = str_replace('[title]', substr($this->getTitle(), 0, $textlength), $str);
+			} else {
+				$str = str_replace('[title]', $this->getTitle(), $str);
+			}
 		}
 
 		// Content
@@ -136,21 +137,17 @@ class LS_Posts {
 
 		// Excerpt
 		if(stripos($str, '[excerpt]') !== false) {
-			$str = str_replace('[excerpt]', $this->getExcerpt($textlength), $str);
+			if(empty($this->post->post_excerpt)) { return ''; }
+			if(!empty($textlength)) {
+				$str = str_replace('[excerpt]', substr($this->post->post_excerpt, 0, $textlength), $str);
+			} else {
+				$str = str_replace('[excerpt]', $this->post->post_excerpt, $str);
+			}
 		}
 
-		// Author nickname
+		// Author
 		if(stripos($str, '[author]') !== false) {
-			$str = str_replace('[author]', $this->getAuthor(true), $str); }
-
-		// Author display name
-		if(stripos($str, '[author-name]') !== false) {
-			$str = str_replace('[author-name]', $this->getAuthor(false), $str); }
-
-		// Author avatar image
-		if(stripos($str, '[author-avatar]') !== false) {
-			$str = str_replace('[author-avatar]', $this->getAuthorImage( $this->post ), $str); }
-
+			$str = str_replace('[author]', $this->getAuthor(), $str); }
 
 		// Author ID
 		if(stripos($str, '[author-id]') !== false) {
@@ -173,8 +170,8 @@ class LS_Posts {
 		// Meta
 		if(stripos($str, '[meta:') !== false) {
 			$matches = array();
-			preg_match_all('/\[meta:\w(?:[-\w]*\w)?]/', $str, $matches);
-
+			preg_match_all('/\[meta:\w+\]/', $str, $matches);
+			
 			foreach($matches[0] as $match) {
 				$meta = str_replace('[meta:', '', $match);
 				$meta = str_replace(']', '', $meta);
@@ -191,58 +188,17 @@ class LS_Posts {
 	 * Returns the lastly selected post's title
 	 * @return string The title of the post
 	 */
-	public function getTitle($length = 0) {
-
-		if(!is_object($this->post)) { return false; }
-
-		$title = $this->post->post_title;
-		if(!empty($length)) {
-			$title = substr($title, 0, $length);
-		}
-
-		return $title;
-	}
-
-
-	/**
-	 * Returns the lastly selected post's excerpt
-	 * @return string The excerpt of the post
-	 */
-	public function getExcerpt($textlength = 0) {
-
-		global $post;
-		$post = $this->post;
-
-		setup_postdata($post);
-		$excerpt = get_the_excerpt();
-		wp_reset_postdata();
-
-		if(!empty($excerpt) && !empty($textlength)) {
-			$excerpt = substr($excerpt, 0, $textlength);
-		}
-
-		return $excerpt;
-	}
-
-
-	public function getAuthor($nick = true) {
-		$key = $nick ? 'user_nicename' : 'display_name';
-		if(is_object($this->post)) { return get_userdata($this->post->post_author)->$key; }
+	public function getTitle() {
+		if(is_object($this->post)) { return __($this->post->post_title); }
 			else { return false; }
 	}
 
-
-	public function getAuthorImage( $post = null ) {
-
-		if( ! empty( $post ) ) { $post = $this->post; }
-
-		return '<img src="'.get_avatar_url( $post->post_author, array(
-			'size' => 256
-		)).'">';
+	public function getAuthor() {
+		if(is_object($this->post)) { return get_userdata($this->post->post_author)->user_nicename; }
+			else { return false; }
 	}
 
-
-	public function getCategoryList( $post = null ) {
+	public function getCategoryList($post = null) {
 
 		if(!empty($post)) { $post = $this->post; }
 
@@ -250,7 +206,7 @@ class LS_Posts {
 			$cats = wp_get_post_categories($this->post->ID);
 			foreach($cats as $val) {
 				$cat = get_category($val);
-				$list[] = '<a href="'.get_category_link($val).'">'.$cat->name.'</a>';
+				$list[] = '<a href="/category/'.$cat->slug.'/">'.$cat->name.'</a>';
 			}
 			return '<div>'.implode(', ', $list).'</div>';
 		} else {
@@ -259,13 +215,13 @@ class LS_Posts {
 	}
 
 
-	public function getTagList( $post = null ) {
+	public function getTagList($post = null) {
 
 		if(!empty($post)) { $post = $this->post; }
 
 		if(has_tag(false, $this->post->ID)) {
 			$tags = wp_get_post_tags($this->post->ID);
-			foreach($tags as $val) {
+			foreach($tags as $val) { 
 				$list[] = '<a href="/tag/'.$val->slug.'/">'.$val->name.'</a>';
 			}
 			return '<div>'.implode(', ', $list).'</div>';
@@ -284,12 +240,11 @@ class LS_Posts {
 
 		if(!is_object($this->post)) { return false; }
 
-		$content = $this->post->post_content;
-		if(!empty($length)) {
-			$content = substr(wp_strip_all_tags($content), 0, $length);
+		if(empty($length)) {
+			return wp_strip_all_tags(__($this->post->post_content));
+		} else {
+			return substr(wp_strip_all_tags(__($this->post->post_content)), 0, $length);
 		}
-
-		return nl2br($content);
 	}
 
 	/**

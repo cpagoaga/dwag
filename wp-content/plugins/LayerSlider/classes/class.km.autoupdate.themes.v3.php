@@ -10,7 +10,7 @@
  * @license http://codecanyon.net/licenses/faq Envato marketplace licenses
  */
 
-require_once dirname(__FILE__) . '/class.km.autoupdate.v3.php';
+require_once 'class.km.autoupdate.v3.php';
 
 class KM_ThemeUpdatesV3 extends KM_UpdatesV3 {
 

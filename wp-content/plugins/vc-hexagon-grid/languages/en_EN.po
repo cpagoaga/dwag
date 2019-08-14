@@ -1,0 +1,345 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Visual Composer Hexagon Grid Addon 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-10-28 01:45+0200\n"
+"PO-Revision-Date: 2016-10-28 01:45+0200\n"
+"Last-Translator: \n"
+"Language-Team: ThemeofWP.com <info@themeofwp.com>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.8\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
+"X-Poedit-Basepath: ../\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: vc_extend.php:55
+msgid "Hexagon Grid"
+msgstr ""
+
+#: vc_extend.php:57
+msgid "Add hexagong grid gallery to your page."
+msgstr ""
+
+#: vc_extend.php:63 vc_extend.php:93 vc_extend.php:157 vc_extend.php:160
+#: vc_extend.php:170 vc_extend.php:180
+msgid "Content"
+msgstr ""
+
+#: vc_extend.php:67 vc_extend.php:383
+msgid "Extra Class Name"
+msgstr ""
+
+#: vc_extend.php:69 vc_extend.php:385
+msgid "Extra class to be customized via CSS"
+msgstr ""
+
+#: vc_extend.php:74
+msgid "Custom Design Options"
+msgstr ""
+
+#: vc_extend.php:76
+msgid "Design options"
+msgstr ""
+
+#: vc_extend.php:89
+msgid "Grid Item"
+msgstr ""
+
+#: vc_extend.php:91
+msgid "Add hexagong grid items to your gallery."
+msgstr ""
+
+#: vc_extend.php:100
+msgid "Default Background Color"
+msgstr ""
+
+#: vc_extend.php:103 vc_extend.php:112
+msgid "Please choose the grid background color."
+msgstr ""
+
+#: vc_extend.php:109
+msgid "Hover Background Color"
+msgstr ""
+
+#: vc_extend.php:118
+msgid "Thumbnail Image"
+msgstr ""
+
+#: vc_extend.php:121
+msgid "Please choose your image."
+msgstr ""
+
+#: vc_extend.php:127
+msgid "Default Title"
+msgstr ""
+
+#: vc_extend.php:130 vc_extend.php:140 vc_extend.php:150
+msgid "Title"
+msgstr ""
+
+#: vc_extend.php:131
+msgid "Please enter the default title."
+msgstr ""
+
+#: vc_extend.php:137
+msgid "Hover Title"
+msgstr ""
+
+#: vc_extend.php:141
+msgid "Please enter the hover title."
+msgstr ""
+
+#: vc_extend.php:147
+msgid "Title Link URL"
+msgstr ""
+
+#: vc_extend.php:151
+msgid "Please enter the link URL."
+msgstr ""
+
+#: vc_extend.php:161
+msgid "Please enter the content."
+msgstr ""
+
+#: vc_extend.php:167
+msgid "Content Color"
+msgstr ""
+
+#: vc_extend.php:171
+msgid "Please choose the title color."
+msgstr ""
+
+#: vc_extend.php:177
+msgid "Content Font Size"
+msgstr ""
+
+#: vc_extend.php:181
+msgid "Please enter the title font size."
+msgstr ""
+
+#: vc_extend.php:187
+msgid "Facebook"
+msgstr ""
+
+#: vc_extend.php:189 vc_extend.php:199 vc_extend.php:209 vc_extend.php:222
+#: vc_extend.php:236 vc_extend.php:246 vc_extend.php:256 vc_extend.php:266
+#: vc_extend.php:276 vc_extend.php:286 vc_extend.php:296 vc_extend.php:306
+msgid "Social"
+msgstr ""
+
+#: vc_extend.php:191
+msgid "Do you want to use Facebook share?."
+msgstr ""
+
+#: vc_extend.php:197
+msgid "Twitter"
+msgstr ""
+
+#: vc_extend.php:201
+msgid "Do you want to use Twitter share?."
+msgstr ""
+
+#: vc_extend.php:207
+msgid "Instagram"
+msgstr ""
+
+#: vc_extend.php:211
+msgid "No"
+msgstr ""
+
+#: vc_extend.php:212 vc_extend.php:316
+msgid "Yes"
+msgstr ""
+
+#: vc_extend.php:214
+msgid "Do you want to use view on Instagram social icon?"
+msgstr ""
+
+#: vc_extend.php:220
+msgid "Instagram Link"
+msgstr ""
+
+#: vc_extend.php:228
+msgid ""
+"Please enter the content url on Instagram. Ex:https://www.instagram.com/p/"
+"BEPQ4Cptvfm/?taken-by=themeofwp"
+msgstr ""
+
+#: vc_extend.php:234
+msgid "LinkedIn"
+msgstr ""
+
+#: vc_extend.php:238
+msgid "Do you want to use LinkedIn share?."
+msgstr ""
+
+#: vc_extend.php:244
+msgid "Pinterest"
+msgstr ""
+
+#: vc_extend.php:248
+msgid "Do you want to use Pinterest share?."
+msgstr ""
+
+#: vc_extend.php:254
+msgid "Google+"
+msgstr ""
+
+#: vc_extend.php:258
+msgid "Do you want to use Google+ share?."
+msgstr ""
+
+#: vc_extend.php:264
+msgid "Digg"
+msgstr ""
+
+#: vc_extend.php:268
+msgid "Do you want to use Digg share?."
+msgstr ""
+
+#: vc_extend.php:274
+msgid "Reddit"
+msgstr ""
+
+#: vc_extend.php:278
+msgid "Do you want to use Reddit share?."
+msgstr ""
+
+#: vc_extend.php:284
+msgid "Stumbleupon"
+msgstr ""
+
+#: vc_extend.php:288
+msgid "Do you want to use Stumbleupon share?."
+msgstr ""
+
+#: vc_extend.php:294
+msgid "Tumblr"
+msgstr ""
+
+#: vc_extend.php:298
+msgid "Do you want to use Tumblr share?."
+msgstr ""
+
+#: vc_extend.php:304
+msgid "E-mail"
+msgstr ""
+
+#: vc_extend.php:308
+msgid "Do you want to use E-mail share?."
+msgstr ""
+
+#: vc_extend.php:314
+msgid "Use theme default font family?"
+msgstr ""
+
+#: vc_extend.php:317 vc_extend.php:326 vc_extend.php:348
+msgid "Custom fonts"
+msgstr ""
+
+#: vc_extend.php:318
+msgid "Use font family from the theme."
+msgstr ""
+
+#: vc_extend.php:335
+msgid "Select font family."
+msgstr ""
+
+#: vc_extend.php:336
+msgid "Select font styling."
+msgstr ""
+
+#: vc_extend.php:345
+msgid "Custom font for the content?"
+msgstr ""
+
+#: vc_extend.php:353
+msgid "Use this custom font family for the content."
+msgstr ""
+
+#: vc_extend.php:360
+msgid "Typography"
+msgstr ""
+
+#: vc_extend.php:371
+msgid "Select element tag."
+msgstr ""
+
+#: vc_extend.php:372
+msgid "Select text alignment."
+msgstr ""
+
+#: vc_extend.php:373
+msgid "Enter font size."
+msgstr ""
+
+#: vc_extend.php:374
+msgid "Enter line height."
+msgstr ""
+
+#: vc_extend.php:375
+msgid "Select heading color."
+msgstr ""
+
+#: vc_extend.php:376
+msgid "Select letter style."
+msgstr ""
+
+#: vc_extend.php:591
+msgid "Share on Facebook"
+msgstr ""
+
+#: vc_extend.php:596
+msgid "Share on Twitter"
+msgstr ""
+
+#: vc_extend.php:601
+msgid "View on Instagram"
+msgstr ""
+
+#: vc_extend.php:606
+msgid "Share on LinkedIn"
+msgstr ""
+
+#: vc_extend.php:610
+msgid "Share on Pinterest"
+msgstr ""
+
+#: vc_extend.php:614
+msgid "Share on Google"
+msgstr ""
+
+#: vc_extend.php:618
+msgid "Share on Digg"
+msgstr ""
+
+#: vc_extend.php:622
+msgid "Share on Reddit"
+msgstr ""
+
+#: vc_extend.php:626
+msgid "Share on Stumbleupon"
+msgstr ""
+
+#: vc_extend.php:630
+msgid "Share on Tumblr"
+msgstr ""
+
+#: vc_extend.php:634
+msgid "Sent by E-mail"
+msgstr ""
+
+#: vc_extend.php:679
+#, php-format
+msgid ""
+"<strong>%s</strong> requires <strong><a href=\"http://bit.ly/1UNVpys\" "
+"target=\"_blank\">Visual Composer</a></strong> plugin to be installed and "
+"activated on your site."
+msgstr ""

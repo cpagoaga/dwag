@@ -54,7 +54,6 @@ $link = vc_build_link( $link );
 $a_href = $link['url'];
 $a_title = $link['title'];
 $a_target = $link['target'];
-$a_rel = $link['rel'];
 $lightbox_data = '';
 
 if ($media_lightbox !== '') {
@@ -73,9 +72,8 @@ if ($media_lightbox !== '') {
 		foreach ($media_album_ids_arr as $_key => $_value) {
 			$album_item_attributes = uncode_get_album_item($_value);
 			$album_th_id = $album_item_attributes['poster'];
-			if ( $album_th_id == '' ) {
+			if ( $album_th_id == '' )
 				continue;
-			}
 			$thumb_attributes = uncode_get_media_info($album_th_id);
 			$album_th_metavalues = unserialize($thumb_attributes->metadata);
 			$album_th_w = $album_th_metavalues['width'];
@@ -118,41 +116,22 @@ if ($media_lightbox !== '') {
 					$album_item_dimensions .= '}';
 				}
 			}
-			if ( $_key+1 < count($media_album_ids_arr) ) {
+			if ( $_key+1 < count($media_album_ids_arr) )
 				$album_item_dimensions .= ',';
-			}
 		}
 		$lightbox_data .= ' data-album=\'[' . $album_item_dimensions . ']\'';
 
-		if ($lbox_skin !== '') {
-			$lightbox_classes['data-skin'] = $lbox_skin;
-		}
-		if ($lbox_dir !== '') {
-			$lightbox_classes['data-dir'] = $lbox_dir;
-		}
-		if ($lbox_social !== '') {
-			$lightbox_classes['data-social'] = true;
-		}
-		if ($lbox_deep !== '') {
-			$lightbox_classes['data-deep'] = 'gallery_' . $media_lightbox;
-		}
-		if ($lbox_no_tmb !== '') {
-			$lightbox_classes['data-notmb'] = true;
-		}
-		if ($lbox_no_arrows !== '') {
-			$lightbox_classes['data-noarr'] = true;
-		}
-		if (count($lightbox_classes) === 0) {
-			$lightbox_classes['data-active'] = true;
-		}
+		if ($lbox_skin !== '') $lightbox_classes['data-skin'] = $lbox_skin;
+		if ($lbox_dir !== '') $lightbox_classes['data-dir'] = $lbox_dir;
+		if ($lbox_social !== '') $lightbox_classes['data-social'] = true;
+		if ($lbox_deep !== '') $lightbox_classes['data-deep'] = 'gallery_' . $media_lightbox;
+		if ($lbox_no_tmb !== '') $lightbox_classes['data-notmb'] = true;
+		if ($lbox_no_arrows !== '') $lightbox_classes['data-noarr'] = true;
+		if (count($lightbox_classes) === 0) $lightbox_classes['data-active'] = true;
 		if ($lbox_connected === 'yes') {
-			if (!isset($lightbox_id) || $lightbox_id === '') {
-				$lightbox_id = uncode_big_rand();
-			}
+			if (!isset($lightbox_id) || $lightbox_id === '') $lightbox_id = big_rand();
 			$lbox_id = $lightbox_id;
-		} else {
-			$lbox_id = $_value;
-		}
+		} else $lbox_id = $_value;
 
 		$div_data_attributes = array_map(function ($v, $k) { return $k . '="' . $v . '"'; }, $lightbox_classes, array_keys($lightbox_classes));
 
@@ -180,7 +159,7 @@ if ($media_lightbox !== '') {
 				}
 
 				$a_href = $big_image['url'];
-			} elseif ($media_mime === 'oembed/iframe') {
+			} else if ($media_mime === 'oembed/iframe') {
 				$lightbox_classes['data-type'] = 'inline';
 				$a_href = '#inline-' . $media_lightbox;
 				echo '<div id="inline-' . esc_attr( $media_lightbox ) . '" class="ilightbox-html" style="display: none;">' . $media_attributes->post_content . '</div>';
@@ -200,70 +179,42 @@ if ($media_lightbox !== '') {
 							$media_dimensions = 'width:' . esc_attr($poster_metavalues['width']) . ',';
 							$media_dimensions .= 'height:' . esc_attr($poster_metavalues['height']) . ',';
 						}
-	    			} elseif ($media_mime === 'oembed/html' || $media_mime === 'oembed/iframe') {
-						$frame_id = 'frame-' . uncode_big_rand();
+	    			} else if ($media_mime === 'oembed/html' || $media_mime === 'oembed/iframe') {
+						$frame_id = 'frame-' . big_rand();
 						$a_href = '#' . $frame_id;
 						echo '<div id="' . esc_attr( $frame_id ) . '" style="display: none;">' . $media_attributes->post_content . '</div>';
-					} else {
-						$a_href = $media_oembed['code'];
-					}
+					} else $a_href = $media_oembed['code'];
 				}
 			}
 
 			if (isset($media_attributes->post_mime_type) && strpos($media_attributes->post_mime_type, 'video/') !== false) {
 				$video_src .= 'html5video:{preload:\'true\',';
 				$video_autoplay = get_post_meta($media_lightbox, "_uncode_video_autoplay", true);
-				if ($video_autoplay) {
-					$video_src .= 'autoplay:\'true\',';
-				}
+				if ($video_autoplay) $video_src .= 'autoplay:\'true\',';
 				$alt_videos = get_post_meta($media_lightbox, "_uncode_video_alternative", true);
 				if (!empty($alt_videos)) {
 					foreach ($alt_videos as $key => $value) {
 						$exloded_url = explode(".", strtolower($value));
 						$ext = end($exloded_url);
-						if ($ext !== '') {
-							$video_src .= $ext . ":'" . $value."',";
-						}
+						if ($ext !== '') $video_src .= $ext . ":'" . $value."',";
 					}
 				}
 				$video_src .= '},';
 			}
 
-			if ($lbox_skin !== '') {
-				$lightbox_classes['data-skin'] = $lbox_skin;
-			}
-			if ($lbox_title !== '' && isset($media_attributes->post_title) && $media_attributes->post_title !== '') {
-				$lightbox_classes['data-title'] = $media_attributes->post_title;
-			}
-			if ($lbox_caption !== '' && isset($media_attributes->post_excerpt) && $media_attributes->post_excerpt !== '') {
-				$lightbox_classes['data-caption'] = $media_attributes->post_excerpt;
-			}
-			if ($lbox_dir !== '') {
-				$lightbox_classes['data-dir'] = $lbox_dir;
-			}
-			if ($lbox_social !== '') {
-				$lightbox_classes['data-social'] = true;
-			}
-			if ($lbox_deep !== '') {
-				$lightbox_classes['data-deep'] = $media_lightbox;
-			}
-			if ($lbox_no_tmb !== '') {
-				$lightbox_classes['data-notmb'] = true;
-			}
-			if ($lbox_no_arrows !== '') {
-				$lightbox_classes['data-noarr'] = true;
-			}
-			if (count($lightbox_classes) === 0) {
-				$lightbox_classes['data-active'] = true;
-			}
+			if ($lbox_skin !== '') $lightbox_classes['data-skin'] = $lbox_skin;
+			if ($lbox_title !== '' && isset($media_attributes->post_title) && $media_attributes->post_title !== '') $lightbox_classes['data-title'] = $media_attributes->post_title;
+			if ($lbox_caption !== '' && isset($media_attributes->post_excerpt) && $media_attributes->post_excerpt !== '') $lightbox_classes['data-caption'] = $media_attributes->post_excerpt;
+			if ($lbox_dir !== '') $lightbox_classes['data-dir'] = $lbox_dir;
+			if ($lbox_social !== '') $lightbox_classes['data-social'] = true;
+			if ($lbox_deep !== '') $lightbox_classes['data-deep'] = $media_lightbox;
+			if ($lbox_no_tmb !== '') $lightbox_classes['data-notmb'] = true;
+			if ($lbox_no_arrows !== '') $lightbox_classes['data-noarr'] = true;
+			if (count($lightbox_classes) === 0) $lightbox_classes['data-active'] = true;
 			if ($lbox_connected === 'yes') {
-				if (!isset($lightbox_id) || $lightbox_id === '') {
-					$lightbox_id = uncode_big_rand();
-				}
+				if (!isset($lightbox_id) || $lightbox_id === '') $lightbox_id = big_rand();
 				$lbox_id = $lightbox_id;
-			} else {
-				$lbox_id = $media_lightbox;
-			}
+			} else $lbox_id = $media_lightbox;
 
 			$div_data_attributes = array_map(function ($v, $k) { return $k . '="' . $v . '"'; }, $lightbox_classes, array_keys($lightbox_classes));
 
@@ -288,81 +239,60 @@ $bigtext = false;
 if ($size) {
 	if ($size === 'link') {
 		unset($classes[0]);
-		if ( $btn_link_size !== '' ) {
-			$classes[] = $btn_link_size;
-		}
-		if ( $btn_link_size === 'bigtext' ) {
-			$bigtext = true;
-		}
-	} else {
-		$classes[] = $size;
+		if ( $btn_link_size !== '' ) $classes[] = $btn_link_size;
+		if ( $btn_link_size === 'bigtext' ) $bigtext = true;
 	}
+	else $classes[] = $size;
 }
 
 if ($custom_typo==='yes') {
 	$classes[] = 'btn-custom-typo';
 	$classes[] = $font_family;
-	if ( $font_weight !== '' ) {
+	if ( $font_weight !== '' )
 		$classes[] = 'font-weight-' . $font_weight;
-	}
 	$classes[] = 'text-' . $text_transform;
 	$classes[] = $letter_spacing;
 }
 
-if ($border_width!=='') {
+if ($border_width!=='')
 	$classes[] = 'border-width-' . intval($border_width);
-}
 
 // Additional classes
-if ($el_class) {
-	$classes[] = $el_class;
-}
+if ($el_class) $classes[] = $el_class;
 
 // Color class
-if ($button_color === '') {
-	$button_color = 'default';
-}
+if ($button_color === '') $button_color = 'default';
 if ($button_color !== 'default') {
-	if ($text_skin === 'yes') {
-		$classes[] = 'btn-text-skin';
-	}
+	if ($text_skin === 'yes') $classes[] = 'btn-text-skin';
 }
-if ($size !== 'btn-link' && $size !== 'link') {
-	$classes[] = 'btn-' . $button_color;
-} else {
-	$classes[] = 'text-' . $button_color . '-color';
-}
+if ($size !== 'btn-link' && $size !== 'link') $classes[] = 'btn-' . $button_color;
+else $classes[] = 'text-' . $button_color . '-color';
 
 
 // Radius class
-if ($radius) {
-	$classes[] = $radius;
-}
+if ($radius) $classes[] = $radius;
 
 // Hover effect
 $hover_fx = $hover_fx=='' ? ot_get_option('_uncode_button_hover') : $hover_fx;
 
 // Outlined and flat classes
 if ( $hover_fx == '' || $hover_fx == 'outlined' ) {
-	if ($outline === 'yes' ) {
+	if ($outline === 'yes' )
 		$classes[] = 'btn-outline';
-	}
 } else {
 	$classes[] = 'btn-flat';
 }
 
 // Shadow class
 if ($shadow === 'yes') {
-	$classes[] = 'btn-shadow';
-	if ( $shadow_weight !== '' ) {
+	if ( $shadow_weight !== '' )
 		$classes[] = 'btn-shadow-' . $shadow_weight;
-	}
+	else
+		$classes[] = 'btn-shadow';
 }
 
 // Italic class
-if ($italic === 'yes') {
-	$classes[] = 'btn-italic';
-}
+if ($italic === 'yes') $classes[] = 'btn-italic';
 
 // Wide class
 if ($wide === 'yes') {
@@ -372,9 +302,7 @@ if ($wide === 'yes') {
 
 if ($display === 'inline') {
 	// Add margin class
-	if ($top_margin === 'yes') {
-		$classes[] = 'btn-top-margin';
-	}
+	if ($top_margin === 'yes') $classes[] = 'btn-top-margin';
 	$wrapper_class[] = 'btn-inline';
 }
 
@@ -382,16 +310,14 @@ if ($display === 'inline') {
 // Prepare icon
 if ($icon !== '') {
 	$icon = '<i class="' . esc_attr($icon) . '"></i>';
-	if ($icon_animation === 'yes') {
-		$classes[] = 'btn-icon-fx';
-	}
-} else {
-	$icon = '';
+	if ($icon_animation === 'yes') $classes[] = 'btn-icon-fx';
 }
+else $icon = '';
 
 $content = trim($content);
 
-if ($icon_position === 'right') {
+if ($icon_position === 'right')
+{
 	$content = $content . $icon;
 	$classes[] = 'btn-icon-right';
 } else {
@@ -411,23 +337,14 @@ $onclick = ($onclick !== '') ? ' onClick="' . esc_attr( $onclick ) . '"' : '';
 
 // Prepare rel attribute
 $rel = ($rel) ? ' rel="' . esc_attr($rel) . '"' : '';
-if ( $rel == '' && $a_rel ) {
-	$rel = ' rel="' . esc_attr($a_rel) . '"';
-}
 
 if ($css_animation !== '') {
 	$wrapper_class[] = 'animate_when_almost_visible ' . $css_animation;
-	if ($animation_delay !== '') {
-		$div_data['data-delay'] = $animation_delay;
-	}
-	if ($animation_speed !== '') {
-		$div_data['data-speed'] = $animation_speed;
-	}
+	if ($animation_delay !== '') $div_data['data-delay'] = $animation_delay;
+	if ($animation_speed !== '') $div_data['data-speed'] = $animation_speed;
 }
 
-if ($width !== '') {
-	$width = ' style="min-width:' . esc_attr( $width ) . 'px"';
-}
+if ($width !== '') $width = ' style="min-width:' . esc_attr( $width ) . 'px"';
 
 $title = ($a_title !== '') ? ' title="' . esc_attr( $a_title ) . '"' : '';
 $target = (trim($a_target) !== '') ? ' target="' . esc_attr( trim($a_target) ) . '"' : '';
@@ -440,8 +357,7 @@ if ( $bigtext ) {
 	$bigtext_end = '</span>';
 }
 
-if ( isset( $inline_hidden ) && $inline_hidden !== '' ) {
-	echo uncode_switch_stock_string( $inline_hidden );
-}
+if ( isset( $inline_hidden ) && $inline_hidden !== '' )
+	echo $inline_hidden;
 
 echo '<span class="' . esc_attr(trim(implode($wrapper_class, ' '))) . '" '.implode(' ', $div_data_attributes).'><a href="' . $a_href . '" class="custom-link ' . esc_attr(trim(implode($classes, ' '))) . '"' . $title . $target . $onclick . $rel . $lightbox_data . $width . '>' . $bigtext_start . do_shortcode($content) . $bigtext_end . '</a></span>';

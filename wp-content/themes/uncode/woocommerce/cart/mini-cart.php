@@ -74,9 +74,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<li class="empty"><?php esc_html_e( 'No products in the cart.', 'woocommerce' ); ?></li>
 
-	<?php endif; ?>
+		<?php do_action( 'woocommerce_mini_cart_contents' ); ?>
 
-	<?php do_action( 'woocommerce_mini_cart_contents' ); ?>
+	<?php endif; ?>
 
 </ul><!-- end product list -->
 

@@ -127,8 +127,24 @@
 			} catch (e) {}
 		});
 	});
-	$('.vc_welcome-header').add('.vc_welcome-brand').add('#vc_no-content-add-text-block').remove();
-	$('#vc_no-content-helper .vc_ui-help-block a').attr('href','https://support.undsgn.com/hc/en-us');
+	$('.vc_welcome-header').html('Welcome to Uncode<br>Visual Composer Version');
+	$('a.deactivate-jscomposer').on('click', function(e) {
+		e.preventDefault();
+		$.ajax({
+			type: 'post',
+			dataType: "json",
+			data: {
+				action: 'deactivate_js_composer',
+			},
+			url: ajaxurl,
+			success: function(data) {
+				if (data == 1) {
+					$('a.deactivate-jscomposer').addClass('button-disabled');
+					window.location = 'admin.php?page=uncode-plugins';
+				}
+			}
+		});
+	});
 })(jQuery);
 
 /*
@@ -875,254 +891,15 @@
 	/// Theme panel + AJAX
 	//////////////////////////////////////////////////////
 
-	var theme_options_form = $('#option-tree-settings-api');
-	var theme_options_form_data;
-	var theme_options_number_of_inputs = 0;
-
-	function count_recursive(data, count) {
-		var count = typeof count === 'undefined' ? -1 : count;
-		for (var i = 0; i < data.length; i++) {
-			if ($.isArray(data[i])) {
-				count--;
-				count += count_r(data[i], 1);
-			} else {
-				count++;
-			}
-		}
-
-		return count;
-	}
-
-	function count_theme_options_inputs(data) {
-		var count = count_recursive(data);
-
-		return count;
-	}
-
-	function calculate_max_input_vars(vars) {
-		var vars = typeof vars  === 'undefined' ? 10000 : vars;
-		var param = [];
-		var var_string;
-		var intData;
-
-		for (i = 0; i < vars; i++) {
-			param[i] = 'var_'+i;
-		}
-
-		$.ajax({
-			url: ajaxurl,
-			data: {
-				action: 'uncode_test_vars',
-				test_input_vars_from_theme_options_nonce: SiteParameters.theme_options_input_vars.max_vars_nonce,
-				content: param
-			},
-			type: 'post',
-			error: function(data) {
-				show_max_input_vars_modal();
-
-				if (SiteParameters.enable_debug == true) {
-					// This console log is disabled by default
-					// So nothing is printed in a typical installation
-					//
-					// It can be enabled for debugging purposes setting
-					// the 'uncode_enable_debug_on_js_scripts' filter to true
-					console.log('Max vars test failed');
-				}
-			},
-			success: function(response) {
-				if (response && response.success === false) {
-					show_max_input_vars_modal();
-
-					if (SiteParameters.enable_debug == true) {
-						// This console log is disabled by default
-						// So nothing is printed in a typical installation
-						//
-						// It can be enabled for debugging purposes setting
-						// the 'uncode_enable_debug_on_js_scripts' filter to true
-						console.log('Max vars test failed');
-					}
-				} else if (response && response.success === true) {
-					intData = parseInt(response.data.count);
-
-					if (intData < (vars - 1)) {
-						if (SiteParameters.enable_debug == true) {
-							// This console log is disabled by default
-							// So nothing is printed in a typical installation
-							//
-							// It can be enabled for debugging purposes setting
-							// the 'uncode_enable_debug_on_js_scripts' filter to true
-							console.log('Real allowed max vars (after calculation): ' + parseInt(intData, 10));
-						}
-
-						if (intData < theme_options_number_of_inputs) {
-							show_max_input_vars_modal();
-						} else {
-							save_theme_options();
-						}
-					} else {
-						calculate_max_input_vars(vars + 10000);
-					}
-
-					// Save new calculated vars
-					$.ajax({
-						url: ajaxurl,
-						type: 'post',
-						data: {
-							action: 'uncode_update_max_input_vars',
-							calculated_vars: intData,
-							update_input_vars_from_theme_options_nonce: SiteParameters.theme_options_input_vars.max_vars_nonce,
-							theme_options_number_of_inputs: theme_options_number_of_inputs
-						}
-					}).done(function(response) {
-						if (SiteParameters.enable_debug == true && response && response.success === false) {
-							// This console log is disabled by default
-							// So nothing is printed in a typical installation
-							//
-							// It can be enabled for debugging purposes setting
-							// the 'uncode_enable_debug_on_js_scripts' filter to true
-							console.log('Max vars update failed');
-						}
-					}).fail(function() {
-						if (SiteParameters.enable_debug == true) {
-							// This console log is disabled by default
-							// So nothing is printed in a typical installation
-							//
-							// It can be enabled for debugging purposes setting
-							// the 'uncode_enable_debug_on_js_scripts' filter to true
-							console.log('Max vars update failed');
-						}
-					});
-				} else {
-					show_max_input_vars_modal();
-
-					// Unknow error, show the modal
-					if (SiteParameters.enable_debug == true) {
-						// This console log is disabled by default
-						// So nothing is printed in a typical installation
-						//
-						// It can be enabled for debugging purposes setting
-						// the 'uncode_enable_debug_on_js_scripts' filter to true
-						console.log('Unknown error during max vars text');
-					}
-				}
-			}
-		});
-	}
-
-	function show_max_input_vars_modal() {
-		var default_recommended_vars = parseInt(SiteParameters.theme_options_input_vars.recommended_max_input_vars, 10);
-		var theme_options_suggested_vars = theme_options_number_of_inputs < default_recommended_vars ? default_recommended_vars : Math.ceil(theme_options_number_of_inputs / 1000) * 1000;
-		var modal_content = SiteParameters.theme_options_input_vars.locale.content.replace('dddd', theme_options_suggested_vars);
-
-		modal_content += '<label class="uncode-dismiss-max-vars-modal-checkbox"><input id="uncode-dismiss-max-vars-modal-checkbox" type="checkbox" name="uncode-dismiss-max-vars-modal">' + SiteParameters.theme_options_input_vars.locale.button_cancel + '</label>';
-
-		$("<div />").html(modal_content).dialog({
-			autoOpen: true,
-			modal: true,
-			dialogClass: 'uncode-modal uncode-modal-max-vars',
-			title: SiteParameters.theme_options_input_vars.locale.title,
-			minHeight: 500,
-			minWidth: 500,
-			buttons: [{
-				text: SiteParameters.theme_options_input_vars.locale.button_confirm,
-				class: 'uncode-save-max-vars-modal',
-				click: function () {
-					var dismiss_checkbox = $('#uncode-dismiss-max-vars-modal-checkbox');
-
-					if (dismiss_checkbox.prop('checked')) {
-						set_dismiss_max_vars_modal_cookie();
-					}
-
-					save_theme_options();
-					$(this).dialog("close");
-				}
-			}],
-		});
-	}
-
-	function set_dismiss_max_vars_modal_cookie() {
-		document.cookie = "uncode-dismiss-max-vars-modal=1";
-	}
-
-	function save_number_of_theme_options_inputs() {
-		// Save number of inputs
-		// This function fires only when there are no problems
-		// with the declared vars. ie. when the declared max
-		// inputs vars is bigger than the number of inputs.
-		//
-		// We need to update this value in the db in any case
-		// because that value is used by uncode_get_recommended_max_input_vars() (PHP)
-		// to update the system status
-		//
-		// When there are problmes instead (ie. when we show the modal)
-		// we update this value in the 'uncode_update_max_input_vars' directly.
-		$.ajax({
-			url: ajaxurl,
-			type: 'post',
-			data: {
-				action: 'uncode_update_theme_options_number_of_inputs',
-				update_theme_options_number_of_inputs_nonce: SiteParameters.theme_options_input_vars.number_of_inputs_nonce,
-				theme_options_number_of_inputs: theme_options_number_of_inputs
-			}
-		}).done(function(response) {
-			if (SiteParameters.enable_debug == true && response && response.success === false) {
-				// This console log is disabled by default
-				// So nothing is printed in a typical installation
-				//
-				// It can be enabled for debugging purposes setting
-				// the 'uncode_enable_debug_on_js_scripts' filter to true
-				console.log('Theme Options inputs update failed');
-			}
-		}).fail(function() {
-			if (SiteParameters.enable_debug == true) {
-				// This console log is disabled by default
-				// So nothing is printed in a typical installation
-				//
-				// It can be enabled for debugging purposes setting
-				// the 'uncode_enable_debug_on_js_scripts' filter to true
-				console.log('Theme Options inputs update failed');
-			}
-		});
-	}
-
-	$('.option-tree-save-button').on('click', function(e) {
-		e.preventDefault();
-
-		theme_options_form_data = theme_options_form.serializeArray();
-		theme_options_number_of_inputs = count_theme_options_inputs(theme_options_form_data);
-
-		if (SiteParameters.enable_debug == true) {
-			// This console log is disabled by default
-			// So nothing is printed in a typical installation
-			//
-			// It can be enabled for debugging purposes setting
-			// the 'uncode_enable_debug_on_js_scripts' filter to true
-			console.log('Form inputs count: ' + theme_options_number_of_inputs);
-			console.log('Declared allowed max vars: ' + parseInt(SiteParameters.theme_options_input_vars.max_input_vars, 10));
-			console.log('Dismiss cookie: ' + (document.cookie.indexOf('uncode-dismiss-max-vars-modal=') === -1 ? 'off' : 'on'));
-		}
-
-		if (document.cookie.indexOf('uncode-dismiss-max-vars-modal=') === -1 && SiteParameters.theme_options_input_vars.enable_max_input_vars_popup && parseInt(SiteParameters.theme_options_input_vars.max_input_vars, 10) < theme_options_number_of_inputs) {
-			calculate_max_input_vars();
-		} else {
-			save_number_of_theme_options_inputs();
-			save_theme_options();
-		}
-	});
-
 	// Save theme options panel via AJAX
-	function save_theme_options() {
-		if (!theme_options_form.hasClass('ajax-enabled')) {
-			theme_options_form.submit();
-		}
+	$('#option-tree-settings-api.ajax-enabled').on('submit', function() {
+		// Save tinyMCE textareas
+		tinyMCE.triggerSave();
 
-		var _this = theme_options_form.removeClass('uncode-ajax-error').removeClass('uncode-ajax-saved');
+		var _this = $(this).removeClass('uncode-ajax-error').removeClass('uncode-ajax-saved');
 		var formData = _this.serialize();
 		var $spinner = $('#option-tree-sub-header button.option-tree-save-button .uncode-ot-spinner'),
 			timeOut;
-
-		// Save tinyMCE textareas
-		tinyMCE.triggerSave();
 
 		clearTimeout(timeOut);
 
@@ -1157,15 +934,10 @@
 				});
 			}, 3000);
 
-			if (SiteParameters.enable_debug == true) {
-				// This console log is disabled by default
-				// So nothing is printed in a typical installation
-				//
-				// It can be enabled for debugging purposes setting
-				// the 'uncode_enable_debug_on_js_scripts' filter to true
-				console.log(xhr);
-			}
+			console.log(xhr); // We can leave this line for debugging purposes
 		}).done(function(res) {
+
+			//console.log(res);
 
 			if ( res.indexOf('<body id="error-page">') !== -1 ) {
 
@@ -1204,7 +976,7 @@
 		});
 
 		return false;
-	}
+	});
 
 	// After the data is saved via AJAX, append the new values to the dropdowns.
 	// And reload the dynamic admin-custom.css file
@@ -1443,104 +1215,6 @@
 			return uri + separator + key + "=" + value;
 		}
 	}
-
-	//////////////////////////////////////////////////////
-	/// Theme registration
-	//////////////////////////////////////////////////////
-
-	var themeRegistrationForm = $('#uncode-registration-form');
-	var themeRegistrationTermsCheckbox = document.getElementById('uncode-registration-accept-terms');
-	var themeRegistrationButton = document.getElementById('envato_update_info');
-
-	if (themeRegistrationTermsCheckbox !== null && themeRegistrationTermsCheckbox.checked) {
-		themeRegistrationButton.disabled = false;
-	}
-
-	if ( themeRegistrationTermsCheckbox !== null ) {
-		themeRegistrationTermsCheckbox.addEventListener('change', function() {
-			if (themeRegistrationTermsCheckbox.checked) {
-				themeRegistrationButton.disabled = false;
-			} else {
-				themeRegistrationButton.disabled = true;
-			}
-		});
-	}
-
-	// Save purchase code via AJAX
-	$(themeRegistrationButton).on('click', function(e) {
-		e.preventDefault();
-
-		var _this = $(this);
-		var purchaseCode = themeRegistrationForm.find('#envato-purchase-code');
-		var noticesContainer = themeRegistrationForm.find('#uncode-admin-registration-notice-container');
-
-		// Return early if it as alreading doing AJAX request
-		if ($(themeRegistrationButton).hasClass('uncode-ajax-loading')) {
-			return false;
-		}
-
-		// Remove classes
-		$(themeRegistrationButton).removeClass('uncode-ajax-saved uncode-ajax-error');
-
-		// Hide notices
-		themeRegistrationForm.find('.uncode-ui-notice').remove();
-
-		// Check if we have a purchase code
-		if (!purchaseCode.val()) {
-			noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--error">' + SiteParameters.theme_registration.locale.empty_purchase_code + '</p>');
-
-			return false;
-		}
-
-		// Validate terms
-		if (!themeRegistrationTermsCheckbox.checked) {
-			noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--error">' + SiteParameters.theme_registration.locale.empty_terms + '</p>');
-
-			return false;
-		}
-
-		// Add loading class to the button
-		$(themeRegistrationButton).addClass('uncode-ajax-loading');
-
-		var post_data = {
-			uncode_theme_registration_purchase_code: purchaseCode.val(),
-			action: 'save_purchase_code',
-			uncode_theme_registration_nonce: SiteParameters.theme_registration.nonce
-		};
-
-		$.post(ajaxurl, post_data, function (response) {
-			if (response) {
-				if (response.success === false) {
-					noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--error">' + response.data.message + '</p>');
-				} else {
-					noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--success">' + response.data.message + '</p>');
-
-					// Show deregister form and hide the other fields
-					setTimeout(function () {
-						noticesContainer.hide();
-						$('.deregister-product-fields-container').show();
-						themeRegistrationForm.find('.register-product-fields-container').hide();
-						$('.registration-error-message').hide();
-						$('.registration-ok-message').show();
-					}, 3500);
-				}
-			}
-		}).done(function () {
-			// Add success class to the button
-			$(themeRegistrationButton).addClass('uncode-ajax-saved');
-
-		}).fail(function () {
-			// Add error class to the button
-			$(themeRegistrationButton).addClass('uncode-ajax-error');
-		}).always(function () {
-			// Remove loading class
-			$(themeRegistrationButton).removeClass('uncode-ajax-loading');
-
-			setTimeout(function () {
-				$(themeRegistrationButton).removeClass('uncode-ajax-saved uncode-ajax-error');
-			}, 3000);
-		});
-	});
 })(jQuery);
 
 
@@ -1802,3 +1476,29 @@ $(function(){
 });
 
 })(jQuery);
+
+//////////////////////////////////////////////////////
+/// Create a modal on the fly
+//////////////////////////////////////////////////////
+
+// (function($) {
+// 	"use strict";
+
+// 	$.fn.uncode_modal = function(action, content) {
+// 		if (action === "open") {
+// 			$('body').append('<div class="uncode-ui-modal"></div><div class="uncode-ui-overlay"></div>');
+
+// 			var modal = $('.uncode-ui-modal');
+// 			content.push('<button type="button" id="uncode-cancel-modal" class="uncode-ui-button uncode-ui-button--modal uncode-ui-button--cancel">' + SiteParameters.modal_buttons.cancel + '</button>');
+// 			content.push('<button type="button" id="uncode-confirm-modal" class="uncode-ui-button uncode-ui-button--modal uncode-ui-button--confirm">' + SiteParameters.modal_buttons.confirm + '</button>');
+// 			modal.append(content);
+// 		}
+
+// 		if (action === "close") {
+// 			// Unbind handlers
+// 			$(document).off('click', '#uncode-confirm-modal');
+
+// 			$('.uncode-ui-modal, .uncode-ui-overlay').remove();
+// 		}
+// 	};
+// })(jQuery);

@@ -6,17 +6,15 @@
  *
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version     3.6.0
+ * @version     3.4.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 
 <?php
 
-	global $limit_content_width, $page_custom_width, $show_body_title, $product;
+	global $limit_content_width, $page_custom_width, $show_body_title;
 
 	/**
 	 * woocommerce_before_single_product hook
@@ -46,9 +44,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div <?php function_exists('wc_product_class') ? wc_product_class( '', $product ) : post_class(); ?>>
+<div <?php function_exists('wc_product_class') ? wc_product_class() : post_class(); ?>>
 	<div class="row-container">
-		<div class="row row-parent col-std-gutter double-top-padding double-bottom-padding <?php echo esc_attr($limit_content_width); ?>" <?php echo wp_kses_post( $page_custom_width ); ?>>
+		<div class="row row-parent col-std-gutter double-top-padding double-bottom-padding <?php echo esc_attr($limit_content_width); ?>" <?php echo $page_custom_width; ?>>
 			<div class="row-inner">
 				<div class="col-lg-<?php echo intval($col_size); ?>">
 					<div class="uncol">
@@ -69,10 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<div class="uncell">
 								<div class="uncont">
 									<?php
-									if ($show_body_title === false) {
-										uncode_woocommerce_hide_product_title();
-										// remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
-									}
+									if ($show_body_title === false) remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
 									do_action( 'woocommerce_single_product_summary' );
 									?>
 								</div>
@@ -113,8 +108,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$content_block_after = $page_content_block_after !== 'none' ? $page_content_block_after : false;
 	}
 
-	if ($content_block_after === false) {
+	if ($content_block_after === false)
 		echo uncode_get_row_template($the_content, '', $limit_content_width, '', ' row-related', false, true, true, $page_custom_width);
-	}
 
 	do_action( 'woocommerce_after_single_product' );

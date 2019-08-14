@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $metabox_data;
 
-do_action( 'woocommerce_share' ); // Sharing plugins can hook into here
-
 $page_show_share = (isset($metabox_data['_uncode_specific_share'][0])) ? $metabox_data['_uncode_specific_share'][0] : '';
 if ($page_show_share === '') {
 	$generic_show_share = ot_get_option('_uncode_product_share');
@@ -24,9 +22,7 @@ if ($page_show_share === '') {
 	$show_share = ($page_show_share === 'off') ? false : true;
 }
 
-if (!$show_share) {
-	return;
-}
+if (!$show_share) return;
 
 ?>
 <hr />
