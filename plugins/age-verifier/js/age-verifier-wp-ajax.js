@@ -1,0 +1,1 @@
+!function(e,i,r,n){e.age_verifier_user_verified=function(){var i={action:"user_verified"};e.post(e.age_verifier_ajax_url,i).done(function(e){})}}(jQuery,window,document);
